@@ -1,5 +1,6 @@
 package com.domain.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,9 @@ import jakarta.transaction.Transactional;
 public class ProductService {
     @Autowired
     private ProductRepo productRepo;
+
+    @Autowired
+    private SupplierService supplierService;
 
     public Product save(Product product) {
         return productRepo.save(product);
@@ -49,5 +53,25 @@ public class ProductService {
         }
         product.getSuppliers().add(supplier);
         save(product);
+    }
+
+    public Product findByProductName(String name) {
+        return productRepo.findByProductName(name);
+    }
+
+    public List<Product> findByProductNameLike(String name) {
+        return productRepo.findByProductNameLike("%" + name + "%");
+    }
+
+    public List<Product> findByProductCategory(long categoryId) {
+        return productRepo.findByProductCategory(categoryId);
+    }
+
+    public List<Product> findByProductSupplier(long supplierId) {
+        Supplier supplier = supplierService.findOne(supplierId);
+        if(supplier == null){
+            return new ArrayList<Product>();
+        }
+        return productRepo.findByProductSupplier(supplier);
     }
 }
